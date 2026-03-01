@@ -18,19 +18,19 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Service
-//@Slf4j
+@Slf4j
 @RequiredArgsConstructor
 public class OwnerServiceImpl implements OwnerService{
-	private final OwnerRepository ownerRepository;
-    private final OwnerMapper ownerMapper;
-    private final OwnerFactory ownerFactory;
-    private final OwnerRegistrationValidator registrationValidator;
-    private final OwnerRegisterRequestNormalizer normalizer;
+	private final OwnerRepository ownerRepository; // done
+    private final OwnerMapper ownerMapper; // done
+    private final OwnerFactory ownerFactory; // done
+    private final OwnerRegistrationValidator registrationValidator; // done
+    private final OwnerRegisterRequestNormalizer normalizer; // done
     
 
     @Override
     public Mono<OwnerResponse> register(OwnerRegisterRequest request) {
-    	//log.info("Owner registration requested");
+    	log.info("Owner registration requested");
 
         OwnerRegisterRequest normalized = normalizer.normalize(request);
 
@@ -39,7 +39,7 @@ public class OwnerServiceImpl implements OwnerService{
 
         return registrationValidator.validate(normalized)
             .then(ownerRepository.save(pending))
-            //.doOnSuccess(saved -> log.info("Owner registered successfully. ownerId={}", saved.getId()))
+            .doOnSuccess(saved2 -> log.info("Owner registered successfully. ownerId={}", saved2.getId()))
             .map(ownerMapper::toResponse);
     }
 

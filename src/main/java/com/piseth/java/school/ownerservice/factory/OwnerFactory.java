@@ -54,7 +54,7 @@ public class OwnerFactory {
     public Owner newPendingOwner(Owner draft) {
 
         Instant now = Instant.now(clock);
-
+        
         return Owner.builder()
             .id(draft.getId()) // usually null; DB generates the ID
             .email(draft.getEmail())
