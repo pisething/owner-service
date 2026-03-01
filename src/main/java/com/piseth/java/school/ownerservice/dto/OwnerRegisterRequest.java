@@ -14,4 +14,5 @@ public class OwnerRegisterRequest {
 
     @Size(max = 30, message = "Phone must be <= 30 characters.")
     private String phone;
+    
 }
