@@ -95,14 +95,15 @@ public class OwnerRegistrationValidator {
             return Mono.empty(); // nothing to validate
         }
         
-        return Mono.empty();
+        //return Mono.empty();
 
-//        return ownerRepository.existsByEmail(email)
-//            .filter(Boolean::booleanValue)
-//            .flatMap(exists ->
-//                Mono.error(new BadRequestException("Email already registered."))
-//            )
-//            .then(); // convert Mono<Boolean> to Mono<Void>
+        return ownerRepository.existsByEmail(email)
+            .filter(Boolean::booleanValue)
+            .flatMap(exists ->
+                Mono.error(new BadRequestException("Email already registered."))
+            )
+            .then(); // convert Mono<Boolean> to Mono<Void>
+            
     }
 
     /**
