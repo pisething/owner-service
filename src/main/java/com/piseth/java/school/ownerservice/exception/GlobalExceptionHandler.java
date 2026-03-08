@@ -24,7 +24,15 @@ public class GlobalExceptionHandler {
         log.warn("Bad request. path={}", exchange.getRequest().getPath(), ex);
         return Mono.just(problem(exchange, HttpStatus.BAD_REQUEST, "Bad request", ex.getMessage(), "/errors/bad-request"));
     }
-/*
+    
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public Mono<ProblemDetail> handleConflict(DataIntegrityViolationException ex, ServerWebExchange exchange) {
+        log.warn("Data integrity violation. path={}", exchange.getRequest().getPath(), ex);
+
+        return Mono.just(problem(exchange, HttpStatus.CONFLICT,
+            "Conflict", "Duplicate or invalid data.", "/errors/conflict"));
+    }
+
     @ExceptionHandler(WebExchangeBindException.class)
     public Mono<ProblemDetail> handleValidation(WebExchangeBindException ex, ServerWebExchange exchange) {
         log.warn("Validation error. path={}", exchange.getRequest().getPath(), ex);
@@ -37,7 +45,6 @@ public class GlobalExceptionHandler {
         return Mono.just(problem(exchange, HttpStatus.BAD_REQUEST, "Validation error", message, "/errors/validation-error"));
     }
     
-    
 
     @ExceptionHandler(Exception.class)
     public Mono<ProblemDetail> handleGeneric(Exception ex, ServerWebExchange exchange) {
@@ -47,7 +54,8 @@ public class GlobalExceptionHandler {
         return Mono.just(problem(exchange, HttpStatus.INTERNAL_SERVER_ERROR,
             "Internal error", "Unexpected error occurred.", "/errors/internal-error"));
     }
-*/
+    
+
     private ProblemDetail problem(ServerWebExchange exchange, HttpStatus status, String title, String detail, String typePath) {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(status, detail);
         pd.setTitle(title);

@@ -15,4 +15,12 @@ public class EmailNormalizer {
 }
 
 
-// Spring Core , Bean
+// email null
+
+/**
+ email valid "dara@gmail.com"
+ email null
+ email blank
+ email has space ex: " dara@gmail.com "
+ email capital case ex: "DARa@gmail.com"
+ */

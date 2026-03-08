@@ -5,7 +5,7 @@ import org.springframework.util.StringUtils;
 @Component
 public class PhoneNormalizer {
 
-    public String normalize(String phone) {
+    public String normalize(String phone) {//85570454545, (+855)70454545, 070454545
         if (!StringUtils.hasText(phone)) {
             return null;
         }

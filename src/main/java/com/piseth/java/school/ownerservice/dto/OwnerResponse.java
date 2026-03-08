@@ -6,8 +6,13 @@ import java.util.UUID;
 import com.piseth.java.school.ownerservice.domain.enums.OwnerStatus;
 
 import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Value;
 
 @Builder
+//@Value (Immutable) vs @Data (Mutable)
+@Getter
 public class OwnerResponse {
 
     UUID id;
