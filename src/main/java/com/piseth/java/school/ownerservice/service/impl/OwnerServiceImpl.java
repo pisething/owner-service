@@ -1,11 +1,14 @@
 package com.piseth.java.school.ownerservice.service.impl;
 
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 import com.piseth.java.school.ownerservice.domain.Owner;
 import com.piseth.java.school.ownerservice.dto.OwnerRegisterRequest;
 import com.piseth.java.school.ownerservice.dto.OwnerResponse;
+import com.piseth.java.school.ownerservice.exception.OwnerNotFoundException;
 import com.piseth.java.school.ownerservice.factory.OwnerFactory;
 import com.piseth.java.school.ownerservice.mapper.OwnerMapper;
 import com.piseth.java.school.ownerservice.normalizer.OwnerRegisterRequestNormalizer;
@@ -36,10 +39,18 @@ public class OwnerServiceImpl implements OwnerService{
 
         Owner draft = ownerMapper.toOwnerDraft(normalized);
         Owner pending = ownerFactory.newPendingOwner(draft);
-
+        //pending.setEmail(pending.getEmail() + "2");
         return registrationValidator.validate(normalized)
-            .then(ownerRepository.save(pending))
+            .then(Mono.defer(() -> ownerRepository.save(pending)))
             .doOnSuccess(saved2 -> log.info("Owner registered successfully. ownerId={}", saved2.getId()))
+            .map(ownerMapper::toResponse);
+    }
+
+
+	@Override
+    public Mono<OwnerResponse> getById(UUID ownerId) {
+        return ownerRepository.findById(ownerId)
+            .switchIfEmpty(Mono.error(new OwnerNotFoundException(ownerId)))
             .map(ownerMapper::toResponse);
     }
 

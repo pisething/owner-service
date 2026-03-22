@@ -18,6 +18,11 @@ import reactor.core.publisher.Mono;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+	@ExceptionHandler(OwnerNotFoundException.class)
+    public Mono<ProblemDetail> handleNotFound(OwnerNotFoundException ex, ServerWebExchange exchange) {
+        log.warn("Owner not found. path={}", exchange.getRequest().getPath(), ex);
+        return Mono.just(problem(exchange, HttpStatus.NOT_FOUND, "Owner not found", ex.getMessage(), "/errors/owner-not-found"));
+    }
     
     @ExceptionHandler(BadRequestException.class)
     public Mono<ProblemDetail> handleBadRequest(BadRequestException ex, ServerWebExchange exchange) {
