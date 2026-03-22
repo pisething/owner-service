@@ -1,6 +1,9 @@
 package com.piseth.java.school.ownerservice.validation;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
@@ -124,6 +127,83 @@ public class OwnerRegistrationValidatorTest {
             //verify(ownerRepository).existsByPhone("012 345");
             verifyNoMoreInteractions(ownerRepository);
         }
+    	
+    	 @Test
+         void shouldError_whenEmailAlreadyRegistered_andShouldNotCheckPhone() {
+             // Given
+             OwnerRegisterRequest request = req("dup@example.com", "012 345");
+
+             // When
+             when(ownerRepository.existsByEmail("dup@example.com")).thenReturn(Mono.just(true));
+
+             // Then
+             StepVerifier.create(ownerRegistrationValidator.validate(request))
+                 .expectErrorSatisfies(ex -> {
+                     assertTrue(ex instanceof BadRequestException);
+                     assertEquals("Email already registered.", ex.getMessage());
+                 })
+                 .verify();
+
+             // Critical rule: phone check must NOT run if email fails
+             verify(ownerRepository).existsByEmail("dup@example.com");
+             verify(ownerRepository, never()).existsByPhone(any());
+             //verifyNoMoreInteractions(ownerRepository);
+         }
+    	 
+    	 @Test
+         void shouldError_whenPhoneAlreadyRegistered() {
+             // Given
+             OwnerRegisterRequest request = req("ok@example.com", "dup-phone");
+
+             // When
+             when(ownerRepository.existsByEmail("ok@example.com")).thenReturn(Mono.just(false));
+             when(ownerRepository.existsByPhone("dup-phone")).thenReturn(Mono.just(true));
+
+             // Then
+             StepVerifier.create(ownerRegistrationValidator.validate(request))
+                 .expectErrorSatisfies(ex -> {
+                     assertTrue(ex instanceof BadRequestException);
+                     assertEquals("Phone already registered.", ex.getMessage());
+                 })
+                 .verify();
+
+             verify(ownerRepository).existsByEmail("ok@example.com");
+             verify(ownerRepository).existsByPhone("dup-phone");
+             //verifyNoMoreInteractions(ownerRepository);
+         }
+    	 
+    	 @Test
+         void shouldSkipEmailCheck_whenEmailBlank_andOnlyCheckPhone() {
+             // Given
+             OwnerRegisterRequest request = req("   ", "012 345");
+             // When
+             when(ownerRepository.existsByPhone("012 345")).thenReturn(Mono.just(false));
+
+             // Then
+             StepVerifier.create(ownerRegistrationValidator.validate(request))
+                 .verifyComplete();
+
+             verify(ownerRepository, never()).existsByEmail(any());
+             verify(ownerRepository).existsByPhone("012 345");
+             //verifyNoMoreInteractions(ownerRepository);
+         }
+    	 
+    	 @Test
+         void shouldPropagateRepositoryError() {
+             // Given
+             OwnerRegisterRequest request = req("test@example.com", null);
+             // When
+             RuntimeException dbError = new RuntimeException("db down");
+             when(ownerRepository.existsByEmail("test@example.com")).thenReturn(Mono.error(dbError));
+
+             // Then
+             StepVerifier.create(ownerRegistrationValidator.validate(request))
+                 .expectErrorSatisfies(ex -> assertSame(dbError, ex))
+                 .verify();
+
+             verify(ownerRepository).existsByEmail("test@example.com");
+             //verifyNoMoreInteractions(ownerRepository);
+         }
     }
     
     
