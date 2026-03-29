@@ -31,6 +31,10 @@ public class Owner {
     private String phone;
 
     private OwnerStatus status;
+    
+    private Instant emailVerifiedAt;
+
+    private Instant phoneVerifiedAt;
 
     private Instant createdAt; // created_at
 
