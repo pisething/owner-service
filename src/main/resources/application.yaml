@@ -16,9 +16,22 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml 
 
+  mail:
+   host: smtp.gmail.com
+   port: 587
+   username: roomservice.piseth@gmail.com
+   password: wrlv cbhx mlxq dpzq
+   properties:
+     mail:
+       smtp:
+         auth: true
+         starttls:
+           enable: true		
+
 app:
   verification:
     otp-length: 6
     otp-ttl-seconds: 300
     max-attempts: 5
+    resend-cooldown-seconds: 60
     otp-pepper: CHANGE-ME-IN-PROD		

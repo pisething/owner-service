@@ -2,7 +2,14 @@ package com.piseth.java.school.ownerservice.notification;
 
 import com.piseth.java.school.ownerservice.domain.enums.VerificationType;
 
+import reactor.core.publisher.Mono;
+
 public interface NotificationSender {
 
-	void send(String target, VerificationType type, String otp);
-}
+	//void send(String target, VerificationType type, String otp);
+	
+	Mono<Void> send(String target, VerificationType type, String otp);
+	
+	
+} // SOLID : 
+// O: Open extension / Closed Modification 
