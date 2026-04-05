@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.piseth.java.school.ownerservice.domain.enums.VerificationType;
 import com.piseth.java.school.ownerservice.dto.OwnerRegisterRequest;
 import com.piseth.java.school.ownerservice.dto.OwnerResponse;
+import com.piseth.java.school.ownerservice.dto.VerifyOtpRequest;
 import com.piseth.java.school.ownerservice.service.OwnerService;
+import com.piseth.java.school.ownerservice.service.VerificationService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +28,33 @@ import reactor.core.publisher.Mono;
 public class OwnerController {
 
     private final OwnerService ownerService;
+    private final VerificationService verificationService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<OwnerResponse> register(@Valid @RequestBody OwnerRegisterRequest request) {
         return ownerService.register(request);
+    }
+    
+    @PostMapping("/{ownerId}/email/send-otp")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> sendEmailOtp(@PathVariable UUID ownerId) {
+        return verificationService.sendOtp(ownerId, VerificationType.EMAIL);
+    }
+    
+    @PostMapping("/{ownerId}/phone/send-otp")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> sendPhoneOtp(@PathVariable UUID ownerId) {
+        return verificationService.sendOtp(ownerId, VerificationType.PHONE);
+    }
+    
+    @PostMapping("/{ownerId}/email/verify")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> verifyEmailOtp(
+        @PathVariable UUID ownerId,
+        @Valid @RequestBody VerifyOtpRequest request
+    ) {
+        return verificationService.verifyOtp(ownerId, VerificationType.EMAIL, request.getOtp());
     }
     
     @GetMapping("/{ownerId}")
