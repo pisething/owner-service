@@ -57,6 +57,15 @@ public class OwnerController {
         return verificationService.verifyOtp(ownerId, VerificationType.EMAIL, request.getOtp());
     }
     
+    @PostMapping("/{ownerId}/phone/verify")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> verifyPhoneOtp(
+        @PathVariable UUID ownerId,
+        @Valid @RequestBody VerifyOtpRequest request
+    ) {
+        return verificationService.verifyOtp(ownerId, VerificationType.PHONE, request.getOtp());
+    }
+    
     @GetMapping("/{ownerId}")
     public Mono<OwnerResponse> getById(@PathVariable UUID ownerId) {
         return ownerService.getById(ownerId);

@@ -1,4 +1,5 @@
 package com.piseth.java.school.ownerservice.notification;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import com.piseth.java.school.ownerservice.domain.enums.VerificationType;
@@ -6,6 +7,7 @@ import com.piseth.java.school.ownerservice.domain.enums.VerificationType;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+@Primary
 @Component
 @Slf4j
 public class ConsoleNotificationSender implements NotificationSender {

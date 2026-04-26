@@ -11,6 +11,7 @@ import com.piseth.java.school.ownerservice.config.VerificationProperties;
 import com.piseth.java.school.ownerservice.domain.Owner;
 import com.piseth.java.school.ownerservice.domain.Verification;
 import com.piseth.java.school.ownerservice.domain.enums.OwnerStatus;
+import com.piseth.java.school.ownerservice.domain.enums.VerificationStatus;
 import com.piseth.java.school.ownerservice.domain.enums.VerificationType;
 import com.piseth.java.school.ownerservice.exception.BadRequestException;
 import com.piseth.java.school.ownerservice.exception.OwnerNotFoundException;
@@ -41,43 +42,6 @@ public class VerificationServiceImpl implements VerificationService{
     private final VerificationProperties verificationProperties;
     private final Clock clock;
     
-    /*
-    @Override
-    public Mono<Void> sendOtp(UUID ownerId, VerificationType type) {
-        return ownerRepository.findById(ownerId)
-            .switchIfEmpty(Mono.error(new OwnerNotFoundException(ownerId)))
-            .flatMap(owner -> {
-                String target = resolveTarget(owner, type);
-                validateAlreadyVerified(owner, type);
-
-                String otp = otpGenerator.generateNumericOtp(verificationProperties.getOtpLength());
-                String salt = otpSaltGenerator.generate();
-                String hash = otpHasher.hash(otp, salt, verificationProperties.getOtpPepper());
-
-                Verification verification = verificationFactory.newVerification(
-                    owner.getId(),
-                    type,
-                    target,
-                    hash,
-                    salt
-                );
-
-                return verificationRepository.findByOwnerIdAndTypeAndVerifiedFalse(ownerId, type)
-                    .flatMap(existing -> {
-                        existing.setVerified(true);
-                        existing.setVerifiedAt(Instant.now(clock));
-                        existing.setUpdatedAt(Instant.now(clock));
-                        return verificationRepository.save(existing);
-                    })
-                    .then(verificationRepository.save(verification))
-                    .doOnSuccess(saved -> {
-                        notificationSender.send(target, type, otp);
-                        log.info("OTP generated and sent. ownerId={}, type={}", ownerId, type);
-                    })
-                    .then();
-            });
-    }
-    */
     
     @Override
     public Mono<Void> sendOtp(UUID ownerId, VerificationType type) {
@@ -130,8 +94,9 @@ public class VerificationServiceImpl implements VerificationService{
 
         return verificationRepository.findAllActiveVerifications(ownerId, type)
             .flatMap(existing -> {
-                existing.setVerified(true);
-                existing.setVerifiedAt(now);
+                //existing.setVerified(true);
+                //existing.setVerifiedAt(now);
+            	existing.setStatus(VerificationStatus.REPLACED);
                 existing.setUpdatedAt(now);
                 return verificationRepository.save(existing);
             })
@@ -150,7 +115,12 @@ public class VerificationServiceImpl implements VerificationService{
         return ownerRepository.findById(ownerId)
             .switchIfEmpty(Mono.error(new OwnerNotFoundException(ownerId)))
             .flatMap(owner -> verificationRepository
-                .findFirstByOwnerIdAndTypeAndVerifiedFalseOrderByCreatedAtDesc(ownerId, type)
+            		.findFirstByOwnerIdAndTypeAndStatusOrderByCreatedAtDesc(
+            			    ownerId,
+            			    type,
+            			    VerificationStatus.ACTIVE
+            			)
+                //.findFirstByOwnerIdAndTypeAndVerifiedFalseOrderByCreatedAtDesc(ownerId, type)
                 .switchIfEmpty(Mono.error(new BadRequestException("Verification code not found. Please request a new OTP.")))
                 .flatMap(verification -> validateAndConsumeOtp(owner, verification, otp, type)));
     }
@@ -168,7 +138,11 @@ public class VerificationServiceImpl implements VerificationService{
         }
 
         if (verification.getExpiresAt().isBefore(now)) {
-            return Mono.error(new BadRequestException("OTP has expired."));
+            verification.setStatus(VerificationStatus.EXPIRED);
+            verification.setUpdatedAt(now);
+
+            return verificationRepository.save(verification)
+                .then(Mono.error(new BadRequestException("OTP has expired.")));
         }
 
         if (verification.getAttemptCount() >= verification.getMaxAttempts()) {
@@ -190,6 +164,7 @@ public class VerificationServiceImpl implements VerificationService{
                 .then(Mono.error(new BadRequestException("Invalid OTP.")));
         }
 
+        verification.setStatus(VerificationStatus.VERIFIED);
         verification.setVerified(true);
         verification.setVerifiedAt(now);
         verification.setUpdatedAt(now);
