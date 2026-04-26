@@ -2,36 +2,35 @@ spring:
   application:
     name: ownerservice
 
-  # Reactive runtime connection
   r2dbc:
-    url: r2dbc:postgresql://localhost:5436/owner
-    username: owner
-    password: owner
+    url: ${DB_R2DBC_URL:r2dbc:postgresql://localhost:5436/owner}
+    username: ${DB_USERNAME:owner}
+    password: ${DB_PASSWORD:owner}
 
-  # JDBC connection only for Liquibase
   datasource:
-    url: jdbc:postgresql://localhost:5436/owner
-    username: owner
-    password: owner
+    url: ${DB_JDBC_URL:jdbc:postgresql://localhost:5436/owner}
+    username: ${DB_USERNAME:owner}
+    password: ${DB_PASSWORD:owner}
+
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.yaml 
+    change-log: classpath:db/changelog/db.changelog-master.yaml
 
   mail:
-   host: smtp.gmail.com
-   port: 587
-   username: roomservice.piseth@gmail.com
-   password: wrlv cbhx mlxq dpzq
-   properties:
-     mail:
-       smtp:
-         auth: true
-         starttls:
-           enable: true		
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 app:
   verification:
-    otp-length: 6
-    otp-ttl-seconds: 300
-    max-attempts: 5
-    resend-cooldown-seconds: 60
-    otp-pepper: CHANGE-ME-IN-PROD		
+    otp-length: ${OTP_LENGTH:6}
+    otp-ttl-seconds: ${OTP_TTL_SECONDS:300}
+    max-attempts: ${OTP_MAX_ATTEMPTS:5}
+    resend-cooldown-seconds: ${OTP_RESEND_COOLDOWN_SECONDS:60}
+    otp-pepper: ${OTP_PEPPER}

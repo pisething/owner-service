@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-//@Primary
+@Primary
 @Component
 @RequiredArgsConstructor
 @Slf4j

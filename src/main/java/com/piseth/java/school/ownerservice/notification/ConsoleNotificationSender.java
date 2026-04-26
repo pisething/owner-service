@@ -7,7 +7,7 @@ import com.piseth.java.school.ownerservice.domain.enums.VerificationType;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
-@Primary
+//@Primary
 @Component
 @Slf4j
 public class ConsoleNotificationSender implements NotificationSender {
