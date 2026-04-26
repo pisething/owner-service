@@ -38,7 +38,6 @@ public class VerificationFactory {
             .attemptCount(0)
             .maxAttempts(verificationProperties.getMaxAttempts())
             .status(VerificationStatus.ACTIVE)
-            .verified(false)
             .verifiedAt(null)
             .createdAt(now)
             .updatedAt(now)

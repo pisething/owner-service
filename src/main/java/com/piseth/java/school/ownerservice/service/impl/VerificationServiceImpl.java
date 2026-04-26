@@ -133,10 +133,6 @@ public class VerificationServiceImpl implements VerificationService{
     ) {
         Instant now = Instant.now(clock);
 
-        if (verification.isVerified()) {
-            return Mono.error(new BadRequestException("OTP has already been used."));
-        }
-
         if (verification.getExpiresAt().isBefore(now)) {
             verification.setStatus(VerificationStatus.EXPIRED);
             verification.setUpdatedAt(now);
@@ -165,7 +161,6 @@ public class VerificationServiceImpl implements VerificationService{
         }
 
         verification.setStatus(VerificationStatus.VERIFIED);
-        verification.setVerified(true);
         verification.setVerifiedAt(now);
         verification.setUpdatedAt(now);
 

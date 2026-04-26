@@ -42,8 +42,6 @@ public class Verification {
 
     private Integer maxAttempts;
 
-    private boolean verified;
-    
     private VerificationStatus status;
 
     private Instant verifiedAt;
