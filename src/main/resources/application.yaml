@@ -20,7 +20,7 @@ spring:
    host: smtp.gmail.com
    port: 587
    username: roomservice.piseth@gmail.com
-   password: wrlv cbhx mlxq dpzq
+   password: pmri pwuw zhji xrbk
    properties:
      mail:
        smtp:

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.piseth.java.school.ownerservice.domain.enums.VerificationType;
+import com.piseth.java.school.ownerservice.dto.OwnerEmailRegisterRequest;
+import com.piseth.java.school.ownerservice.dto.OwnerPhoneRegisterRequest;
 import com.piseth.java.school.ownerservice.dto.OwnerRegisterRequest;
 import com.piseth.java.school.ownerservice.dto.OwnerResponse;
 import com.piseth.java.school.ownerservice.dto.VerifyOtpRequest;
@@ -30,10 +32,26 @@ public class OwnerController {
     private final OwnerService ownerService;
     private final VerificationService verificationService;
 
-    @PostMapping
+    @PostMapping // @TODO will be removed
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<OwnerResponse> register(@Valid @RequestBody OwnerRegisterRequest request) {
         return ownerService.register(request);
+    }
+    
+    @PostMapping("/register/email")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<OwnerResponse> registerByEmail(
+        @Valid @RequestBody OwnerEmailRegisterRequest request
+    ) {
+        return ownerService.registerByEmail(request);
+    }
+
+    @PostMapping("/register/phone")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<OwnerResponse> registerByPhone(
+        @Valid @RequestBody OwnerPhoneRegisterRequest request
+    ) {
+        return ownerService.registerByPhone(request);
     }
     
     @PostMapping("/{ownerId}/email/send-otp")
