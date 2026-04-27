@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.piseth.java.school.ownerservice.config.VerificationProperties;
 import com.piseth.java.school.ownerservice.domain.Verification;
+import com.piseth.java.school.ownerservice.domain.enums.VerificationStatus;
 import com.piseth.java.school.ownerservice.domain.enums.VerificationType;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class VerificationFactory {
             .expiresAt(now.plusSeconds(verificationProperties.getOtpTtlSeconds()))
             .attemptCount(0)
             .maxAttempts(verificationProperties.getMaxAttempts())
-            .verified(false)
+            .status(VerificationStatus.ACTIVE)
             .verifiedAt(null)
             .createdAt(now)
             .updatedAt(now)

@@ -21,6 +21,14 @@ public class OwnerRegisterRequestNormalizer {
         return newRequest;
     }
     
+    public String normalizeEmail(String email) {
+        return emailNormalizer.normalize(email);
+    }
+
+    public String normalizePhone(String phone) {
+        return phoneNormalizer.normalize(phone);
+    }
+    
 }
 
 // @Mock
