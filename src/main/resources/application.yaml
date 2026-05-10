@@ -27,6 +27,8 @@ spring:
          auth: true
          starttls:
            enable: true		
+server:
+  port: 8080
 
 app:
   verification:
@@ -35,3 +37,13 @@ app:
     max-attempts: 5
     resend-cooldown-seconds: 60
     otp-pepper: CHANGE-ME-IN-PROD		
+
+keycloak:
+  base-url: ${KEYCLOAK_BASE_URL:http://localhost:9090}
+  realm: ${KEYCLOAK_REALM:room-system}
+  admin:
+    client-id: ${KEYCLOAK_ADMIN_CLIENT_ID:owner-service}
+    client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET:T1cYir3AlWgLcymePdreKx1Urud8bWM6}
+  client:
+    client-id: ${KEYCLOAK_LOGIN_CLIENT_ID:user-login}
+    client-secret: ${KEYCLOAK_LOGIN_CLIENT_SECRET:WTbQbJ3Ld1hoFoZszWyKlwx3Am0HgSL1}
