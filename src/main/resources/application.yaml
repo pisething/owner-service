@@ -35,3 +35,13 @@ app:
     max-attempts: 5
     resend-cooldown-seconds: 60
     otp-pepper: CHANGE-ME-IN-PROD		
+
+keycloak:
+  base-url: ${KEYCLOAK_BASE_URL:http://localhost:9090}
+  realm: ${KEYCLOAK_REALM:thereal}
+  admin:
+    client-id: ${KEYCLOAK_ADMIN_CLIENT_ID:user-service}
+    client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET:MPaf8YgdzjoYtwbZEfea2uk0AfhZgBlW}
+  client:
+    client-id: ${KEYCLOAK_LOGIN_CLIENT_ID:mobile-app}
+    client-secret: ${KEYCLOAK_LOGIN_CLIENT_SECRET:IVrEdBOuEDreT2GTlHMbR9iOzckQfADV}		
